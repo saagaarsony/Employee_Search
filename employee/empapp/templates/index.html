@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,300;1,200;1,400;1,600&family=Lilita+One&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+    *{
+        font-family: 'IBM Plex Sans', sans-serif;
+        font-family: 'Lilita One', sans-serif;
+        font-family: 'Poppins', sans-serif;
+    }
+    </style>
+
+  <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+<script>
+  $(document).ready(function() {
+    $('#example').DataTable( {
+        dom: 'Bfrtip',
+        buttons: [
+            'copyHtml5',
+            'excelHtml5',
+            'csvHtml5',
+            'pdfHtml5'
+        ]
+    } );
+} );
+</script>
+
+    <title>Employee Search System</title>
+  </head>
+  <body>
+    <div class="container mt-5 p-5 border rounded bg-light">
+        {% if messages %}
+          {% for message in messages %}
+              <div class="alert alert-success text-center md-3">
+                {{message}}
+              </div>
+          {% endfor %}
+        {% endif %}
+      <!--Searching fields-->
+          <div>
+            <form action="" method="post" class="d-flex">
+              {% csrf_token %}
+              <div class="container">
+                <h2 class="py-3 text-center">Employee Search</h2>
+                <div class="row py-3 px-5">
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label for="name" class="col-md-4 col-form-label">Employee Name</label>
+                      <div class="col-md-8">
+                        <input value="{{emp_name}}" name="emp_name" id="name" type="text" class="form-control" placeholder="Name">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="form-group row">
+                      <label for="email" class="col-md-4 col-form-label">Email</label>
+                      <div class="col-md-8">
+                        <input value="{{emp_email}}" name="emp_email" id="email" type="email" class="form-control" placeholder="E-mail">
+                      </div>
+                    </div>
+                  </div>
+          
+                  <div class="col-md-6">
+                    <div class="form-group row">
+                      <label for="mobile" class="col-md-4 col-form-label">Mobile</label>
+                      <div class="col-md-8">
+                        <input value="{{emp_mobile}}" name="emp_mobile" id="mobile" type="tel" class="form-control" placeholder="Mobile">
+                      </div>
+                    </div>
+                    <br>
+                    <div class="form-group row">
+                      <label for="department" class="col-md-4 col-form-label">Department</label>
+                      <div class="col-md-8">
+                        <select value="{{emp_department}}" name="emp_department" type="searche" name="department" class="form-control" id="department" placeholder="Department">
+                          <option value="">Select a department</option>
+                          <option value="hr">Human Resources</option>
+                          <option value="it">Information Technology</option>
+                          <option value="finance">Finance</option>
+                          <option value="sales">Sales</option>
+                          <option value="marketing">Marketing</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="container text-center my-5 mb-1">
+                    <div class="row">
+                        <div class="col-sm">
+                          <button type="submit" class="btn btn-default btn-dark" name="searche">Find Employee</button>
+                            </button>
+                        </div>
+                        <div class="col-sm">
+                          <a href="" data-bs-toggle="modal" data-bs-target="#addEmployeeModal" class="btn btn-dark">Add Employee</a>
+                  
+                        </div>
+                        <div class="col-sm">
+                          <a href="" data-bs-toggle="modal" data-bs-target="#addDepartmentModal" class="btn btn-dark">Add Department</a>
+                        </div>
+
+                        <div class="col-sm">
+                          <input class="btn btn-dark mx-4" type="submit" value="        Refresh        " name="Test"> </input>
+                
+                        </div>
+                    </div>
+                </div>   
+                </div>
+              </div>
+            </form>
+          </div> 
+                 
+      <!--Searching Field End-->
+<!--Start Table (Employee Table..)-->
+<hr class="bg-danger border-5 border-top border-danger" />
+
+<table id="example" class="table mt-1 table-bordered table-secondary" >
+    <thead class="table-hover">
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Employee Name</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Mobile</th>
+        <th scope="col">Department</th>
+        <th scope="col">Address</th>
+        <th scope="col">D.O.B</th>
+        <th scope="col">D.O.J</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for employee in employees %}
+        <tr>
+            <th>{{employee.id}}</th>
+            <td>{{employee.name}}</td>
+            <td>{{employee.email}}</td>
+            <td>{{employee.mobile}}</td>
+            <td>{{employee.department}}</td>
+            <td>{{employee.address}}</td>
+            <td>{{employee.dob | date:"Y-m-d"}}</td>
+            <td>{{employee.doj | date:"Y-m-d"}}</td>
+            <td>
+                <a href="" data-bs-toggle="modal" data-bs-target="#updateEmployeeModal_{{employee.id}}" class="btn btn-success fa-xs md-3"><i class="fa-solid fa-user-pen"></i></a>
+                <br>
+                <a href="" data-bs-toggle="modal" data-bs-target="#deleteEmployeeModal_{{employee.id}}" class="btn btn-danger fa-xs"><i class="fa-solid fa-trash"></i></i></a>
+            </td>
+        </tr> 
+      
+
+        
+        <!--Update Employee Model-->  
+        <!-- Modal -->
+<div class="modal fade" id="updateEmployeeModal_{{employee.id}}" tabindex="-1" aria-labelledby="updateEmployeeModalLabel_{{employee.id}}" aria-hidden="true">
+    <div class="modal-dialog">
+      
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="updateEmployeeModalLabel_{{employee.id}}">Update Employee</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+        
+        
+                <div class="modal-body">
+                    <input type="hidden" name="id" value="{{employee.id}}">
+                  <div class="">
+                    <br>
+                    <label for="name">Employee Name</label><br>
+                    <input type="text" name="name" class="form-control" value="{{employee.name}}" id="name" required>
+                  </div>
+                  <div class="">
+                    <br>
+                    <label for="email">Employee E-mail</label>
+                    <input type="email" name="email" class="form-control" value="{{employee.email}}" id="email" required>
+                  </div>
+                  <div class="">
+                    <br>
+                    <label for="mobile">Mobile</label>
+                    <input type="tel" name="mobile" class="form-control" value="{{employee.mobile}}" id="mobile" required>
+                  </div>
+                  <div class="">
+                    <br>
+                          <label for="department">Department:</label>
+                          <select type="text" name="department" class="form-control" id="department">
+                            {% for departments in e_department%}
+                            <option value="{{departments.deptname}}">{{departments.deptname}}</option>
+                            {% endfor %}
+                          </select>
+                      </div>
+                  <div class="">
+                    <br>
+                    <label for="address">Address</label>
+                    <input type="text" name="address" class="form-control" value="{{employee.address}}" id="address" required>
+                  </div>
+        
+                
+                  <div class="">
+                    <br>
+                    <label for="dob">D.O.B</label>
+                    <input type="date" name="dob" class="form-control" value="{{employee.dob}}" id="dob" required>
+                  </div>
+        
+                  
+                  <div class="">
+                    <br>
+                    <label for="doj">D.O.J</label>
+                    <input type="date" name="doj" class="form-control" value="{{employee.doj}}" id="doj" required>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-dark" name="update">UPDATE Employee</button>
+                </div>
+              </div>
+        </form>
+    </div>
+  </div> 
+
+  <!--Delete Model-->
+  <div class="modal fade" id="deleteEmployeeModal_{{employee.id}}" tabindex="-1" aria-labelledby="deleteEmployeeModal_{{employee.id}}" aria-hidden="true">
+    <div class="modal-dialog">
+      
+        <form action="" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="id" value="{{employee.id}}">
+            <div class="modal-content"> 
+                <div class="modal-body">  
+                    <p>Are You Sure To Detele The Data..?</p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-danger" name="delete">Delete Employee</button>
+                </div>
+              </div>
+        </form>
+    </div>
+  </div>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal Add New Employee -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+
+
+      <form action="" method="post">
+        {% csrf_token %}
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEmployeeModalLabel">Add New Employee</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+    
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Employee Name</label>
+                            <input type="text" name="name" class="form-control" id="name" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="email">Employee E-mail</label>
+                            <input type="email" name="email" class="form-control" id="email" required>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="mobile">Mobile</label>
+                            <input type="tel" name="mobile" class="form-control" id="mobile" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="department">Department:</label>
+                            <select type="text" name="department" class="form-control" id="e_department">
+                              {% for departments in e_department%}
+                              <option value="{{departments.deptname}}">{{departments.deptname}}</option>
+                              {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <input type="text" name="address" class="form-control" id="address" required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="dob">D.O.B</label>
+                            <input type="date" name="dob" class="form-control" id="dob" required>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="doj">D.O.J</label>
+                            <input type="date" name="doj" class="form-control" id="doj" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-dark" name="add">Add New Employee</button>
+            </div>
+        </div>
+    </form>
+    </div>
+  </div>
+
+<!-- Add New Department -->
+<!-- Modal -->
+
+<div class="modal fade" id="addDepartmentModal" tabindex="-1" aria-labelledby="addDepartmentModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    
+      <form action="" method="post">
+          {% csrf_token %}
+          <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="addDepartmentModalLabel">Add New Department</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+      
+      
+              <div class="modal-body">
+                <div class="">
+                  <label for="deptname">Department Name</label>
+                  <input type="text" name="deptname" class="form-control" id="deptname" required>
+                </div>
+
+                <br>
+
+                <div class="form-group">
+                  <label for="depttype">Department Type</label>
+                  <select type="text" name="depttype" class="form-control" id="depttype">
+                      <option value="">Select a department</option>
+                      <option value="hr">Human Resources</option>
+                      <option value="it">Information Technology</option>
+                      <option value="finance">Finance</option>
+                      <option value="sales">Sales</option>
+                      <option value="marketing">Marketing</option>
+                  </select>
+              </div>
+              <br>
+
+              <div class="form-group">
+                <label for="deptblock">Department Address Block</label>
+                <select type="text" name="deptblock" class="form-control" id="deptblock">
+                    <option value="">Select a department</option>
+                    <option value="hr">Human Resources</option>
+                    <option value="it">Information Technology</option>
+                    <option value="finance">Finance</option>
+                    <option value="sales">Sales</option>
+                    <option value="marketing">Marketing</option>
+                </select>
+            </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-dark" name="dept">Add New Department</button>
+              </div>
+            </div>
+      </form>
+  </div>
+</div>  
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    
+    <script>
+      $(document).ready(function () {
+          $("#search-button").click(function () {
+              var searchquery = $("#searchquery").val();
+              $.ajax({
+                  type: "POST",
+                  url: "",
+                  data: {
+                      action: "search",
+                      searchquery: searchquery,
+                      csrfmiddlewaretoken: '{{ csrf_token }}'
+                  },
+                  success: function (data) {
+                      
+                      $("#search-results").empty();
+                      
+                      data.employees.forEach(function (employee) {
+                          var resultHtml = "<p>Name: " + employee.name + "<br>Email: " + employee.email + "<br>Mobile: " + employee.mobile + "<br>Department: " + employee.department + "</p>";
+                          $("#search-results").append(resultHtml);
+                      });
+                  }
+              });
+          });
+      });
+  </script>
+  
+    
+  </body>
+</html>
